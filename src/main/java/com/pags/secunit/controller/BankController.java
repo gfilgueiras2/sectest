@@ -1,23 +1,32 @@
 package com.pags.secunit.controller;
 
-import com.pags.secunit.entity.User;
-import com.pags.secunit.service.UserService;
+import com.pags.secunit.entity.Transaction;
+import com.pags.secunit.service.TransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("bank")
+import java.util.List;
+
+@RequestMapping("banks")
 @RestController
 @RequiredArgsConstructor
 public class BankController {
 
-    private final UserService userService;
+    private final TransactionService transactionService;
 
-    @GetMapping("user/{id}")
-    public User getUserAccount(@PathVariable("id") Integer id) {
-        return userService.getUserInfo(id);
+    @PostMapping("/transactions")
+    public Transaction createTransaction(@RequestBody Transaction transaction) {
+        return transactionService.createTransaction(transaction);
+    }
+
+    @GetMapping("/transactions/{id}")
+    public Transaction getTransaction(@PathVariable("id") Integer id) {
+        return transactionService.getTransaction(id);
+    }
+
+    @GetMapping("/transactions/all/{userId}")
+    public List<Transaction> allTransactionsOf(@PathVariable("userId") Integer id) {
+        return transactionService.allTransactionsOf(id);
     }
 
 }
