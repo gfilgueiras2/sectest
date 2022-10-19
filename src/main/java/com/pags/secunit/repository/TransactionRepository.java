@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
-    @Query(value = "SELECT * FROM TRANSACTION WHERE SENT_ID = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM BANK_TRANSACTION WHERE SENT_ID = :id", nativeQuery = true)
     List<Transaction> allTransactionsOf(@Param("id") Integer id);
 }

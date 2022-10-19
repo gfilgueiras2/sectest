@@ -21,7 +21,7 @@ public class TransactionService {
         return transactionRepository.getReferenceById(id);
     }
 
-    public List<Transaction> allTransactionsOf(Integer id) {
+    public List<Transaction> allTransactionsOf(Integer id){
         return transactionRepository.allTransactionsOf(id);
     }
 }

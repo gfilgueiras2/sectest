@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "BANK_TRANSACTION")
 public class Transaction {
 
     @Id
@@ -22,6 +23,7 @@ public class Transaction {
     @Column(name = "SENT_ID")
     private Integer sentId;
 
+    @Column(name = "TRANSACTION_VALUE")
     private Double value;
 
     @Column(name = "RECEIVER_ID")
