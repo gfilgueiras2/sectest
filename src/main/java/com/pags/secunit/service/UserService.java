@@ -17,8 +17,11 @@ public class UserService {
     public BaseResponse<User> getUserInfo(Integer id) throws Exception {
         try {
             User user = userRepository.getReferenceById(id);
-            String maskAddress = user.getAddress().substring(0,6);
-            user.setAddress(maskAddress);
+            // Verificacao de endereco nulo
+            if(user.getAddress() != null) {
+                String maskAddress = user.getAddress().substring(0,6);
+                user.setAddress(maskAddress);
+            }
             return BaseResponse.<User>builder()
                     .response(user)
                     .error(null)
@@ -26,7 +29,8 @@ public class UserService {
         } catch (Exception e) {
             return BaseResponse.<User>builder()
                     .response(null)
-                    .error(e.getMessage())
+                    // Erro mais generico
+                    .error("Algo de errado aconteceu. Entre em contato com o suporte")
                     .build();
         }
     }
