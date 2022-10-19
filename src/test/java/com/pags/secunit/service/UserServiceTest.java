@@ -63,6 +63,24 @@ public class UserServiceTest {
 
     // 2 - Valide uma entrada de senha do usuario para se registrar com a excecao
 
+    @Test
+    void shouldBlockPassword_WhenIsWeak() {
+        User newUser = User.builder()
+                .id(1)
+                .cpf(123)
+                .email("teste@gmail.com")
+                .money(100.0)
+                .address("rua engenheiro jose antonio")
+                .name("Joaozinho")
+                .password("123")
+                .addressNumber(12)
+                .build();
+
+        BaseResponse<User> expected = userService.createAccount(newUser);
+
+        Assertions.assertEquals(expected.getError(), "Revise a senha. A senha informada é muito fraca.");
+    }
+
     // 3 - Valide o input no valor da transacao e a excecao
 
     // 4 - Valide o tamanho do valor da transacao e a excecao

@@ -35,7 +35,23 @@ public class UserService {
         }
     }
 
-    public User createAccount(User user) {
-        return userRepository.save(user);
+    public BaseResponse<User> createAccount(User user) {
+        if(validatePassword(user.getPassword())) {
+            return BaseResponse.<User>builder()
+                    .response(userRepository.save(user))
+                    .error(null)
+                    .build();
+        } else {
+            return BaseResponse.<User>builder()
+                    .response(null)
+                    .error("Revise a senha. A senha informada é muito fraca.")
+                    .build();
+        }
+
+    }
+
+    private boolean validatePassword(String password) {
+        // validacao simples
+        return password.length() > 8;
     }
 }
