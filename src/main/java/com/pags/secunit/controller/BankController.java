@@ -2,6 +2,7 @@ package com.pags.secunit.controller;
 
 import com.pags.secunit.entity.Transaction;
 import com.pags.secunit.service.TransactionService;
+import dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public class BankController {
     private final TransactionService transactionService;
 
     @PostMapping("/transactions")
-    public Transaction createTransaction(@RequestBody Transaction transaction) {
+    public BaseResponse<Transaction> createTransaction(@RequestBody Transaction transaction) throws Exception {
         return transactionService.createTransaction(transaction);
     }
 

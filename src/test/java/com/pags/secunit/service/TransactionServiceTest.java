@@ -1,7 +1,14 @@
 package com.pags.secunit.service;
 
+import com.pags.secunit.entity.Transaction;
+import com.pags.secunit.entity.User;
+import dto.BaseResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -10,16 +17,68 @@ public class TransactionServiceTest {
     @InjectMocks
     private TransactionService transactionService;
 
-    // 1 - Trate um lancamento de excecoes
-
-    // 2 - Valide uma entrada de senha do usuario para se registrar com a excecao
+    @Mock
+    private UserService userService;
 
     // 3 - Valide o input no valor da transacao e a excecao
+    @Test
+    void shouldFailTransaction_whenMoneyIsNotAvailable() throws Exception {
+        Transaction transaction = Transaction.builder()
+                .sentId(1)
+                .receiverId(12)
+                .value(100.0)
+                .build();
+
+        User userFromDb = User.builder()
+                .id(1)
+                .cpf(123)
+                .email("teste@gmail.com")
+                .money(10.0)
+                .address("Rua Doutor Teste Unitario")
+                .name("Joaozinho")
+                .password("123")
+                .addressNumber(12)
+                .build();
+
+        BaseResponse<User> userResponse = BaseResponse.<User>builder()
+                .error(null)
+                .response(userFromDb)
+                .build();
+
+        BaseResponse<Transaction> expectedResponse = BaseResponse.<Transaction>builder()
+                .response(null)
+                .error("Você não tem dinheiro!")
+                .build();
+
+        Mockito.when(userService.getUserInfo(Mockito.anyInt())).thenReturn(userResponse);
+
+        BaseResponse<Transaction> actualReponse = transactionService.createTransaction(transaction);
+
+        Assertions.assertEquals(expectedResponse, actualReponse);
+    }
 
     // 4 - Valide o tamanho do valor da transacao e a excecao
+    @Test
+    void shouldBlock_whenInputIsHigherThanTen() throws Exception {
+        Transaction transaction = Transaction.builder()
+                .sentId(1)
+                .receiverId(12)
+                .value(1000000000.0)
+                .build();
+
+        BaseResponse<Transaction> expectedResponse = BaseResponse.<Transaction>builder()
+                .error("Valor maior do que o permitido!")
+                .response(null)
+                .build();
+
+        BaseResponse<Transaction> actualResponse = transactionService.createTransaction(transaction);
+
+        Assertions.assertEquals(expectedResponse, actualResponse);
+    }
 
     // 5 - Valide o retorno das respostas dos servicos de transacao
     // Dica: Todas as informacoes de retorno sao necessarias?
+
 
     // 6 - Intentifique e valide um ataque de Broken Object Level Access
 
