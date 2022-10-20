@@ -26,8 +26,8 @@ public class BankController {
     }
 
     @GetMapping("/transactions/all/{userId}")
-    public List<Transaction> allTransactionsOf(@PathVariable("userId") Integer id) {
-        return transactionService.allTransactionsOf(id);
+    public BaseResponse<List<Transaction>> allTransactionsOf(@PathVariable("userId") Integer id, @RequestHeader("password") String password) throws Exception {
+        return transactionService.allTransactionsOf(id, password);
     }
 
 }

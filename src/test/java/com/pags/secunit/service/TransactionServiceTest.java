@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
 
@@ -78,7 +80,37 @@ public class TransactionServiceTest {
 
     // 5 - Valide o retorno das respostas dos servicos de transacao
     // Dica: Todas as informacoes de retorno sao necessarias?
+    @Test
+    void shouldNotShowTransactions_whenPasswordIsIncorrect() throws Exception {
+        String passwordFromHeader = "incorrectPassword";
+        User userFromDb = User.builder()
+                .id(1)
+                .cpf(123)
+                .email("teste@gmail.com")
+                .money(10.0)
+                .address("Rua Doutor Teste Unitario")
+                .name("Joaozinho")
+                .password("testPassword@123")
+                .addressNumber(12)
+                .build();
 
+        BaseResponse<User> userResponse = BaseResponse.<User>builder()
+                .error(null)
+                .response(userFromDb)
+                .build();
+
+        Mockito.when(userService.getUserInfo(Mockito.anyInt())).thenReturn(userResponse);
+
+        BaseResponse<List<Transaction>> expectedResponse = BaseResponse.<List<Transaction>>builder()
+                .response(null)
+                .error("Recurso não autorizado!")
+                .build();
+
+        BaseResponse<List<Transaction>> actualResponse = transactionService
+                .allTransactionsOf(1, passwordFromHeader);
+
+        Assertions.assertEquals(expectedResponse, actualResponse);
+    }
 
     // 6 - Intentifique e valide um ataque de Broken Object Level Access
 

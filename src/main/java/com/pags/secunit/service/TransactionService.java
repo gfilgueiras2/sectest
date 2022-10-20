@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +46,7 @@ public class TransactionService {
         } else {
             return BaseResponse.<Transaction>builder()
                     .response(null)
-                    .error("Você não tem dinheiro!")
-                    .build();
+                    .error("Você não tem dinheiro!")                    .build();
         }
     }
 
@@ -54,7 +54,24 @@ public class TransactionService {
         return transactionRepository.getReferenceById(id);
     }
 
-    public List<Transaction> allTransactionsOf(Integer id){
-        return transactionRepository.allTransactionsOf(id);
+    public BaseResponse<List<Transaction>> allTransactionsOf(Integer id, String password) throws Exception {
+        User userData = userService.getUserInfo(id).getResponse();
+        if(userData != null) {
+            if (Objects.equals(userData.getPassword(), password)) {
+                return BaseResponse.<List<Transaction>>builder()
+                        .response(transactionRepository.allTransactionsOf(id))
+                        .error(null)
+                        .build();
+            } else {
+                return BaseResponse.<List<Transaction>>builder()
+                        .response(null)
+                        .error("Recurso não autorizado!")
+                        .build();
+            }
+        }
+        return BaseResponse.<List<Transaction>>builder()
+                .response(null)
+                .error("Usuario não existe!")
+                .build();
     }
 }
