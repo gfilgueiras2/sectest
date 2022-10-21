@@ -80,6 +80,4 @@ public class UserServiceTest {
 
         Assertions.assertEquals(expected.getError(), "Revise a senha. A senha informada é muito fraca.");
     }
-
-    // 6 - Intentifique e valide um ataque de Broken Object Level Access
 }
