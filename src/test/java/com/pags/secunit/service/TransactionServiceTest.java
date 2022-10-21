@@ -78,8 +78,7 @@ public class TransactionServiceTest {
         Assertions.assertEquals(expectedResponse, actualResponse);
     }
 
-    // 5 - Valide o retorno das respostas dos servicos de transacao
-    // Dica: Todas as informacoes de retorno sao necessarias?
+    // 5 - Valide o retorno das respostas dos servicos de transacao. (BOLA)
     @Test
     void shouldNotShowTransactions_whenPasswordIsIncorrect() throws Exception {
         String passwordFromHeader = "incorrectPassword";
