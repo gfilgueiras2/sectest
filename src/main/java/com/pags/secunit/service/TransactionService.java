@@ -18,7 +18,7 @@ public class TransactionService {
 
     private final UserService userService;
 
-    public BaseResponse<Transaction> createTransaction(Transaction transaction) throws Exception {
+    public BaseResponse<Transaction> createTransaction(Transaction transaction, String password) throws Exception {
         // filters trasnaction value
         if(transaction.getValue() > 1000000.0) {
             return BaseResponse.<Transaction>builder()
@@ -34,20 +34,28 @@ public class TransactionService {
                     .response(null)
                     .error("Usuario não existe!")
                     .build();
-        }
-        if(sender.getMoney() >= transaction.getValue()) {
-            // subtract the money from the sender and add to the receiver account...
-
-            // return transaction response
-            return BaseResponse.<Transaction>builder()
-                    .response(transactionRepository.save(transaction))
-                    .error(null)
-                    .build();
         } else {
-            return BaseResponse.<Transaction>builder()
-                    .response(null)
-                    .error("Você não tem dinheiro!")                    .build();
+            if(Objects.equals(sender.getPassword(), password)) {
+                if(sender.getMoney() >= transaction.getValue()) {
+                    // subtract the money from the sender and add to the receiver account...
+
+                    // return transaction response
+                    return BaseResponse.<Transaction>builder()
+                            .response(transactionRepository.save(transaction))
+                            .error(null)
+                            .build();
+                } else {
+                    return BaseResponse.<Transaction>builder()
+                            .response(null)
+                            .error("Você não tem dinheiro!")
+                            .build();
+                }
+            }
         }
+        return BaseResponse.<Transaction>builder()
+                .response(null)
+                .error("Não autorizado!")
+                .build();
     }
 
     public Transaction getTransaction(Integer id) {

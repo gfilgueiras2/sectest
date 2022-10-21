@@ -25,6 +25,7 @@ public class TransactionServiceTest {
     // 3 - Valide o input no valor da transacao e a excecao
     @Test
     void shouldFailTransaction_whenMoneyIsNotAvailable() throws Exception {
+        String passwordFromHeader = "123";
         Transaction transaction = Transaction.builder()
                 .sentId(1)
                 .receiverId(12)
@@ -54,7 +55,7 @@ public class TransactionServiceTest {
 
         Mockito.when(userService.getUserInfo(Mockito.anyInt())).thenReturn(userResponse);
 
-        BaseResponse<Transaction> actualReponse = transactionService.createTransaction(transaction);
+        BaseResponse<Transaction> actualReponse = transactionService.createTransaction(transaction, passwordFromHeader);
 
         Assertions.assertEquals(expectedResponse, actualReponse);
     }
@@ -62,6 +63,7 @@ public class TransactionServiceTest {
     // 4 - Valide o tamanho do valor da transacao e a excecao
     @Test
     void shouldBlock_whenInputIsHigherThanTen() throws Exception {
+        String passwordFromHeader = "123";
         Transaction transaction = Transaction.builder()
                 .sentId(1)
                 .receiverId(12)
@@ -73,7 +75,7 @@ public class TransactionServiceTest {
                 .response(null)
                 .build();
 
-        BaseResponse<Transaction> actualResponse = transactionService.createTransaction(transaction);
+        BaseResponse<Transaction> actualResponse = transactionService.createTransaction(transaction, passwordFromHeader);
 
         Assertions.assertEquals(expectedResponse, actualResponse);
     }
@@ -112,5 +114,58 @@ public class TransactionServiceTest {
     }
 
     // 6 - Indentificar um problema com autorizacao na transacao
+    @Test
+    void shouldNotTransfer_whenUserIsNotAuthorized() throws Exception {
+        String passwordFromHeader = "incorrectPassword";
+        User receiver = User.builder()
+                .id(1)
+                .cpf(123)
+                .email("hacker@hack.com")
+                .money(10.0)
+                .address("Rua Doutor Teste Unitario")
+                .name("Hackudao")
+                .password("hacker123")
+                .addressNumber(12)
+                .build();
+
+        User sender = User.builder()
+                .id(2)
+                .cpf(123)
+                .email("jonas@gmail.com")
+                .money(10.0)
+                .address("Rua Doutor Teste Unitario")
+                .name("Joaozinho")
+                .password("testPassword@123")
+                .addressNumber(12)
+                .build();
+
+        Transaction transaction = Transaction.builder()
+                .value(100.0)
+                .sentId(2)
+                .receiverId(1)
+                .build();
+
+        BaseResponse<User> senderResponse = BaseResponse.<User>builder()
+                .error(null)
+                .response(sender)
+                .build();
+
+        BaseResponse<User> receiverResponse = BaseResponse.<User>builder()
+                .error(null)
+                .response(receiver)
+                .build();
+
+        Mockito.when(userService.getUserInfo(Mockito.anyInt())).thenReturn(senderResponse, receiverResponse);
+
+        BaseResponse<Transaction> expectedResponse = BaseResponse.<Transaction>builder()
+                .response(null)
+                .error("Não autorizado!")
+                .build();
+
+        BaseResponse<Transaction> actualResponse = transactionService
+                .createTransaction(transaction, passwordFromHeader);
+
+        Assertions.assertEquals(expectedResponse, actualResponse);
+    }
 
 }

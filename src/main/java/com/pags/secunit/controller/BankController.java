@@ -16,8 +16,9 @@ public class BankController {
     private final TransactionService transactionService;
 
     @PostMapping("/transactions")
-    public BaseResponse<Transaction> createTransaction(@RequestBody Transaction transaction) throws Exception {
-        return transactionService.createTransaction(transaction);
+    public BaseResponse<Transaction> createTransaction(@RequestBody Transaction transaction,
+                                                       @RequestHeader("password") String password) throws Exception {
+        return transactionService.createTransaction(transaction, password);
     }
 
     @GetMapping("/transactions/{id}")
